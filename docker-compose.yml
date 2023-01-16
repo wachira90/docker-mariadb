@@ -1,0 +1,32 @@
+version: '3.3'
+
+services:
+    mariadb:
+        image: mariadb:10.8.6
+        container_name: mariadb
+        security_opt:
+            - seccomp:unconfined
+        restart: always
+        volumes:
+            - ./data/:/var/lib/mysql:rw
+        environment:
+            TZ: "Asia/Bangkok"
+            MYSQL_USER: "wachira"
+            MYSQL_PASSWORD: "example"
+            MYSQL_ROOT_PASSWORD: "example"
+            MYSQL_DATABASE: "testdb"
+        command: --query_cache_type=1 --collation-server=utf8_general_ci --character-set-server=utf8 --query-cache-limit=524288 --query-cache-min-res-unit=2048 --query-cache-size=83886080 --explicit_defaults_for_timestamp
+        ports:
+            - 33306:3306
+
+    adminer_mariadb:
+        image: wachira90/adminer:4.7.8
+        container_name: adminer_mariadb
+        restart: always
+        links:
+            - mariadb
+        ports:
+            - 8089:8080
+
+volumes:
+    mariadb:
